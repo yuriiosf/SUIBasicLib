@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-public protocol RouteProtocol: Equatable, Hashable {
+public protocol RouteProtocol: Equatable, Hashable, CaseIterable {
     var icon: String { get }
+    var iconSF: Bool { get }
     var name: String { get }
     var isDebug: Bool { get }
 }
 
-public struct RouteStack<T: Equatable> {
+public struct RouteStack<T: RouteProtocol> {
     var routes: [T]
     
     public init(initial: T) {
@@ -42,7 +43,7 @@ public struct RouteStack<T: Equatable> {
     func top() -> T? { return self.routes.last }
 }
 
-public final class AppCoordinator<Route: Equatable & Hashable>: ObservableObject {
+public final class AppCoordinator<Route: RouteProtocol>: ObservableObject {
     @Published var routerStack: RouteStack<Route>
     
     public init(initialRoute: Route) {
@@ -78,7 +79,7 @@ public final class AppCoordinator<Route: Equatable & Hashable>: ObservableObject
     }
 }
 
-public struct NavigationContainer<Routes: Hashable, Content: View>: View {
+public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
     @ObservedObject var coordinator: AppCoordinator<Routes>
     var content: (Routes) -> Content
     @State private var dragOffset: CGFloat = 0

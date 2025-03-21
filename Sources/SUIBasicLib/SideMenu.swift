@@ -7,6 +7,102 @@
 
 import SwiftUI
 
+struct SideMenuView<Routes: RouteProtocol>: View {
+    @ObservedObject var coordinator: AppCoordinator<Routes>
+    @ObservedObject var viewModel: SideMenuViewModel
+    
+    let routes: [Routes]
+    let title: String
+    var titleFont: Font
+    let icon: String?
+    let iconSF: Bool?
+    let iconScale: CGFloat?
+    var backgroundColor: Color
+    var titleForegroundColor: Color
+    var elementFont: Font
+    var elementForegroundColor: Color
+    var elementSelectedForegroundColor: Color
+    var elementBackgroundColor: Color
+    var elementSelectedBackgroundColor: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading) {
+                if let icon = icon {
+                    if let iconScale = iconScale {
+                        titleIcon(icon: icon, iconScale: iconScale)
+                    } else {
+                        titleIcon(icon: icon, iconScale: 0.2)
+                    }
+                }
+                Text(title)
+                    .font(titleFont)
+                    .foregroundStyle(titleForegroundColor)
+            }
+
+                .padding()
+            ScrollView {
+                ForEach(routes, id: \.self) { route in
+                    menuButton(route)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(backgroundColor)
+    }
+    
+    @ViewBuilder private func titleIcon(icon: String, iconScale: CGFloat) -> some View {
+        if iconSF == true {
+            Image(systemName: icon)
+                .resizable()
+                .frame(
+                    width: UIScreen.main.bounds.width * iconScale,
+                    height: UIScreen.main.bounds.width * iconScale
+                )
+        } else {
+            Image(icon)
+                .resizable()
+                .frame(
+                    width: UIScreen.main.bounds.width * iconScale,
+                    height: UIScreen.main.bounds.width * iconScale
+                )
+        }
+    }
+    
+    @ViewBuilder private func menuButton(_ route: Routes) -> some View {
+        Button(action: {
+            menuSelection(route)
+        }) {
+            HStack {
+                if route.iconSF {
+                    Image(systemName: route.icon)
+                } else {
+                    Image(route.icon)
+                }
+                
+                Text(route.name)
+                    .font(elementFont)
+            }
+            .foregroundStyle(coordinator.top() == route ? elementSelectedForegroundColor : elementForegroundColor)
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Rectangle().fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor))
+            
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private func menuSelection(_ state: Routes) {
+        if coordinator.top() != state {
+            withAnimation {
+                coordinator.set(state)
+            }
+        }
+        HapticService.shared.selection()
+        viewModel.closeMenu()
+    }
+}
+
 @MainActor
 final class SideMenuViewModel: ObservableObject {
     @Published var offset: CGFloat = UIScreen.main.bounds.width < UIScreen.main.bounds.height ? (-UIScreen.main.bounds.width * 0.3) : (-UIScreen.main.bounds.height * 0.3)
@@ -23,20 +119,26 @@ final class SideMenuViewModel: ObservableObject {
         isMenuOpen = false
         offset = UIScreen.main.bounds.width < UIScreen.main.bounds.height ? (-UIScreen.main.bounds.width * 0.3) : (-UIScreen.main.bounds.height * 0.3)
     }
-    
-    var angle: CGFloat {
-        let clampedValue = min(max(offset, menuStart), menuWidth)
-        let normalized = (clampedValue - menuStart) / (menuWidth - menuStart)
-        return normalized * 90
-    }
 }
 
-public struct SideMenuContentView<Content: View, Routes: Hashable>: View {
-    @ObservedObject var appRouter: AppCoordinator<Routes>
-    @ViewBuilder var content: Content
+public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
+    @ObservedObject var coordinator: AppCoordinator<Routes>
     @StateObject private var viewModel = SideMenuViewModel()
-    @State var backgroundColor: Color
-//    @State var 
+    let routes: [Routes]
+    let title: String
+    var titleFont: Font = .largeTitle
+    var icon: String? = nil
+    var iconSF: Bool? = nil
+    var iconScale: CGFloat? = nil
+    var menuButtonForegroundColor: Color = .black
+    var backgroundColor: Color = .gray
+    var titleForegroundColor: Color = .black
+    var elementFont: Font = .body
+    var elementForegroundColor: Color = .black
+    var elementSelectedForegroundColor: Color = .white
+    var elementBackgroundColor: Color = .gray
+    var elementSelectedBackgroundColor: Color = .accentColor
+    @ViewBuilder var content: Content
     
     public var body: some View {
         GeometryReader { geometry in
@@ -64,10 +166,8 @@ public struct SideMenuContentView<Content: View, Routes: Hashable>: View {
                             HapticService.shared.selection()
                         }, label: {
                             Image(systemName: "line.3.horizontal")
-//                                .foregroundStyle(Color.primaryReverse)
+                                .foregroundStyle(menuButtonForegroundColor)
                                 .font(.system(size: 40))
-                                .rotationEffect(.degrees(Double(max(-180, min(viewModel.angle, 180)))))
-                                .animation(.easeInOut, value: viewModel.angle)
                                 .padding(.horizontal)
                                 .padding(.top, 8)
                         })
@@ -75,10 +175,25 @@ public struct SideMenuContentView<Content: View, Routes: Hashable>: View {
                     }
                     Spacer()
                 }
-//                SideMenuView(appRouter: appRouter, viewModel: viewModel)
-//                    .background(Color.secondaryBackground)
-//                    .frame(width: viewModel.menuWidth)
-//                    .offset(x: viewModel.offset - viewModel.menuWidth)
+                SideMenuView(
+                    coordinator: coordinator,
+                    viewModel: viewModel,
+                    routes: routes,
+                    title: title,
+                    titleFont: titleFont,
+                    icon: icon,
+                    iconSF: iconSF,
+                    iconScale: iconScale,
+                    backgroundColor: backgroundColor,
+                    titleForegroundColor: titleForegroundColor,
+                    elementFont: elementFont,
+                    elementForegroundColor: elementForegroundColor,
+                    elementSelectedForegroundColor: elementSelectedForegroundColor,
+                    elementBackgroundColor: elementBackgroundColor,
+                    elementSelectedBackgroundColor: elementSelectedBackgroundColor
+                )
+                    .frame(width: viewModel.menuWidth)
+                    .offset(x: viewModel.offset - viewModel.menuWidth)
             }
             .gesture(
                 DragGesture()
