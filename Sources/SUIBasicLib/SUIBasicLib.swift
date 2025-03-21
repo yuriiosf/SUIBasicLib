@@ -39,25 +39,25 @@ public final class AppCoordinator<Route: Equatable & Hashable>: ObservableObject
         self.routerStack = RouteStack(initial: initialRoute)
     }
     
-    func set(_ route: Route) {
+    public func set(_ route: Route) {
         withAnimation {
             routerStack.set(route)
         }
     }
     
-    func push(_ route: Route) {
+    public func push(_ route: Route) {
         withAnimation {
             routerStack.push(route)
         }
     }
     
-    func pop() {
+    public func pop() {
         withAnimation {
             routerStack.pop()
         }
     }
     
-    func popToRoot() {
+    public func popToRoot() {
         withAnimation {
             routerStack.popToRoot()
         }
