@@ -126,24 +126,60 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
     @StateObject private var viewModel = SideMenuViewModel()
     let routes: [Routes]
     let title: String
-    var titleFont: Font = .largeTitle
-    var icon: String? = nil
-    var iconSF: Bool? = nil
-    var iconScale: CGFloat? = nil
-    var menuButtonForegroundColor: Color = .black
-    var backgroundColor: Color = .gray
-    var titleForegroundColor: Color = .black
-    var elementFont: Font = .body
-    var elementForegroundColor: Color = .black
-    var elementSelectedForegroundColor: Color = .white
-    var elementBackgroundColor: Color = .gray
-    var elementSelectedBackgroundColor: Color = .accentColor
-    @ViewBuilder var content: Content
+    var titleFont: Font
+    var icon: String?
+    var iconSF: Bool?
+    var iconScale: CGFloat?
+    var menuButtonForegroundColor: Color
+    var backgroundColor: Color
+    var titleForegroundColor: Color
+    var elementFont: Font
+    var elementForegroundColor: Color
+    var elementSelectedForegroundColor: Color
+    var elementBackgroundColor: Color
+    var elementSelectedBackgroundColor: Color
+    let content: () -> Content
+    
+    public init(
+        coordinator: AppCoordinator<Routes>,
+        routes: [Routes],
+        title: String,
+        titleFont: Font = .largeTitle,
+        icon: String? = nil,
+        iconSF: Bool? = nil,
+        iconScale: CGFloat? = nil,
+        menuButtonForegroundColor: Color = .black,
+        backgroundColor: Color = .gray,
+        titleForegroundColor: Color = .black,
+        elementFont: Font = .body,
+        elementForegroundColor: Color = .black,
+        elementSelectedForegroundColor: Color = .white,
+        elementBackgroundColor: Color = .gray,
+        elementSelectedBackgroundColor: Color = .accentColor,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.coordinator = coordinator
+        self.routes = routes
+        self.title = title
+        self.titleFont = titleFont
+        self.icon = icon
+        self.iconSF = iconSF
+        self.iconScale = iconScale
+        self.menuButtonForegroundColor = menuButtonForegroundColor
+        self.backgroundColor = backgroundColor
+        self.titleForegroundColor = titleForegroundColor
+        self.elementFont = elementFont
+        self.elementForegroundColor = elementForegroundColor
+        self.elementSelectedForegroundColor = elementSelectedForegroundColor
+        self.elementBackgroundColor = elementBackgroundColor
+        self.elementSelectedBackgroundColor = elementSelectedBackgroundColor
+        self.content = content
+    }
     
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                content
+                content()
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .overlay(content: {
                         if viewModel.isMenuOpen {
