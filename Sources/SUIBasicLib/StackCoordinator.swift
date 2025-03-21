@@ -14,10 +14,10 @@ public protocol RouteProtocol: Equatable, Hashable, CaseIterable {
     var isDebug: Bool { get }
 }
 
-public struct RouteStack<T: RouteProtocol> {
+struct RouteStack<T: RouteProtocol> {
     var routes: [T]
     
-    public init(initial: T) {
+    init(initial: T) {
         self.routes = [initial]
     }
     
@@ -83,6 +83,14 @@ public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
     @ObservedObject var coordinator: AppCoordinator<Routes>
     var content: (Routes) -> Content
     @State private var dragOffset: CGFloat = 0
+    
+    public init(
+        coordinator: AppCoordinator<Routes>,
+        @ViewBuilder content: @escaping (Routes) -> Content
+    ) {
+        self.coordinator = coordinator
+        self.content = content
+    }
     
     public var body: some View {
         ZStack {
