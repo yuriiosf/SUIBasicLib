@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+public protocol RouteProtocol: Equatable, Hashable {
+    var icon: String { get }
+    var name: String { get }
+    var isDebug: Bool { get }
+}
+
 public struct RouteStack<T: Equatable> {
     var routes: [T]
     
@@ -65,6 +71,10 @@ public final class AppCoordinator<Route: Equatable & Hashable>: ObservableObject
         withAnimation {
             routerStack.popToRoot()
         }
+    }
+    
+    public func top() -> Route? {
+        return routerStack.top()
     }
 }
 
