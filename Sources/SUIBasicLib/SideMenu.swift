@@ -89,17 +89,17 @@ struct SideMenuView<Routes: RouteProtocol>: View {
             .foregroundStyle(coordinator.top() == route ? elementSelectedForegroundColor : elementForegroundColor)
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(backgroundShape(isRounded: isRounded, radius: roundedCornerRadius ?? 12, padding: roundedPadding, route: route))
+            .background(backgroundShape(isRounded: isRounded, radius: roundedCornerRadius ?? 12, route: route))
         }
         .buttonStyle(.plain)
+        .padding(.horizontal, isRounded ? roundedPadding ?? 6 : 0)
     }
     
     @ViewBuilder
-    func backgroundShape(isRounded: Bool, radius: CGFloat, padding: CGFloat?, route: Routes) -> some View {
+    func backgroundShape(isRounded: Bool, radius: CGFloat, route: Routes) -> some View {
         if isRounded {
             RoundedRectangle(cornerRadius: radius)
                 .fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor)
-                .padding(.horizontal, padding ?? 6)
         } else {
             Rectangle()
                 .fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor)
