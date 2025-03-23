@@ -214,10 +214,12 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .overlay(content: {
                             if viewModel.offset != viewModel.defaultOffset() {
-                                Color.white
-                                    .opacity(0.3)
-                                    .brightness(-0.6)
-                                    .ignoresSafeArea(.all)
+                                withAnimation {
+                                    Color.white
+                                        .opacity(0.3)
+                                        .brightness(-0.6)
+                                        .ignoresSafeArea(.all)
+                                }
                             }
                         })
                         .disabled(viewModel.isMenuOpen)
