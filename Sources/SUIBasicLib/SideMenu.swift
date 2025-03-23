@@ -138,7 +138,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
     var elementSelectedForegroundColor: Color
     var elementBackgroundColor: Color
     var elementSelectedBackgroundColor: Color
-    var transactionWithAnimation: Bool = true
+    var transactionWithAnimation: Bool
     let content: (Routes) -> Content
     
     public init(
@@ -157,6 +157,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
         elementSelectedForegroundColor: Color = .white,
         elementBackgroundColor: Color = .gray,
         elementSelectedBackgroundColor: Color = .accentColor,
+        transactionWithAnimation: Bool = true,
         @ViewBuilder content: @escaping (Routes) -> Content
     ) {
         self.coordinator = coordinator
@@ -174,6 +175,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
         self.elementSelectedForegroundColor = elementSelectedForegroundColor
         self.elementBackgroundColor = elementBackgroundColor
         self.elementSelectedBackgroundColor = elementSelectedBackgroundColor
+        self.transactionWithAnimation = transactionWithAnimation
         self.content = content
     }
     
