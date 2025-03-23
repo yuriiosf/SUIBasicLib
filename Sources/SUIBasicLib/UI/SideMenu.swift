@@ -210,7 +210,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .overlay(content: {
                             if viewModel.isMenuOpen {
-                                Color.gray
+                                Color.white
                                     .opacity(0.3)
                                     .brightness(-0.6)
                                     .ignoresSafeArea(.all)
