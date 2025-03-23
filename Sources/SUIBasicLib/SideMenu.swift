@@ -138,6 +138,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
     var elementSelectedForegroundColor: Color
     var elementBackgroundColor: Color
     var elementSelectedBackgroundColor: Color
+    var transactionWithAnimation: Bool = true
     let content: (Routes) -> Content
     
     public init(
@@ -266,7 +267,9 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
             }
         }
         .transaction {
-            $0.animation = nil
+            if !transactionWithAnimation {
+                $0.animation = nil
+            }
         }
     }
 }
