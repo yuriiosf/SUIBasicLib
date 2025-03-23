@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  HapticService.swift
 //  SUIBasicLib
 //
 //  Created by admin on 21.03.2025.
@@ -8,7 +8,7 @@
 import UIKit
 
 @MainActor
-class HapticService {
+public class HapticService {
     
     public static let shared = HapticService()
     
