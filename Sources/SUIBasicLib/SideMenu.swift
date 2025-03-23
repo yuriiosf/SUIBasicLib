@@ -265,5 +265,8 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                 event ? viewModel.openMenu() : viewModel.closeMenu()
             }
         }
+        .transaction {
+            $0.animation = nil
+        }
     }
 }
