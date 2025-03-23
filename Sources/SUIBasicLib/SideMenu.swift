@@ -24,6 +24,9 @@ struct SideMenuView<Routes: RouteProtocol>: View {
     var elementSelectedForegroundColor: Color
     var elementBackgroundColor: Color
     var elementSelectedBackgroundColor: Color
+    var isRounded: Bool
+    var roundedPadding: CGFloat?
+    var roundedCornerRadius: CGFloat?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -86,10 +89,21 @@ struct SideMenuView<Routes: RouteProtocol>: View {
             .foregroundStyle(coordinator.top() == route ? elementSelectedForegroundColor : elementForegroundColor)
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Rectangle().fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor))
-            
+            .background(backgroundShape(isRounded: isRounded, radius: roundedCornerRadius ?? 12, padding: roundedPadding, route: route))
         }
         .buttonStyle(.plain)
+    }
+    
+    @ViewBuilder
+    func backgroundShape(isRounded: Bool, radius: CGFloat, padding: CGFloat?, route: Routes) -> some View {
+        if isRounded {
+            RoundedRectangle(cornerRadius: radius)
+                .fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor)
+                .padding(.horizontal, padding ?? 6)
+        } else {
+            Rectangle()
+                .fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor)
+        }
     }
     
     private func menuSelection(_ state: Routes) {
@@ -139,6 +153,9 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
     var elementBackgroundColor: Color
     var elementSelectedBackgroundColor: Color
     var transactionWithAnimation: Bool
+    var isRounded: Bool
+    var roundedPadding: CGFloat?
+    var roundedCornerRadius: CGFloat?
     let content: (Routes) -> Content
     
     public init(
@@ -158,6 +175,9 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
         elementBackgroundColor: Color = .gray,
         elementSelectedBackgroundColor: Color = .accentColor,
         transactionWithAnimation: Bool = true,
+        isRounded: Bool = false,
+        roundedPadding: CGFloat? = nil,
+        roundedCornerRadius: CGFloat? = nil,
         @ViewBuilder content: @escaping (Routes) -> Content
     ) {
         self.coordinator = coordinator
@@ -176,6 +196,9 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
         self.elementBackgroundColor = elementBackgroundColor
         self.elementSelectedBackgroundColor = elementSelectedBackgroundColor
         self.transactionWithAnimation = transactionWithAnimation
+        self.isRounded = isRounded
+        self.roundedPadding = roundedPadding
+        self.roundedCornerRadius = roundedCornerRadius
         self.content = content
     }
     
@@ -231,7 +254,10 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                     elementForegroundColor: elementForegroundColor,
                     elementSelectedForegroundColor: elementSelectedForegroundColor,
                     elementBackgroundColor: elementBackgroundColor,
-                    elementSelectedBackgroundColor: elementSelectedBackgroundColor
+                    elementSelectedBackgroundColor: elementSelectedBackgroundColor,
+                    isRounded: isRounded,
+                    roundedPadding: roundedPadding,
+                    roundedCornerRadius: roundedCornerRadius
                 )
                 .frame(width: viewModel.menuWidth)
                 .offset(x: viewModel.offset - viewModel.menuWidth)
