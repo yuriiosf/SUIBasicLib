@@ -133,6 +133,10 @@ final class SideMenuViewModel: ObservableObject {
         isMenuOpen = false
         offset = UIScreen.main.bounds.width < UIScreen.main.bounds.height ? (-UIScreen.main.bounds.width * 0.3) : (-UIScreen.main.bounds.height * 0.3)
     }
+    
+    func defaultOffset() -> CGFloat {
+        return UIScreen.main.bounds.width < UIScreen.main.bounds.height ? (-UIScreen.main.bounds.width * 0.3) : (-UIScreen.main.bounds.height * 0.3)
+    }
 }
 
 public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
@@ -209,7 +213,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                     content(route)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .overlay(content: {
-                            if viewModel.isMenuOpen {
+                            if viewModel.offset != viewModel.defaultOffset() {
                                 Color.white
                                     .opacity(0.3)
                                     .brightness(-0.6)
