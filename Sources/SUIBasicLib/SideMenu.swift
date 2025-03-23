@@ -39,8 +39,8 @@ struct SideMenuView<Routes: RouteProtocol>: View {
                     .font(titleFont)
                     .foregroundStyle(titleForegroundColor)
             }
-
-                .padding()
+            
+            .padding()
             ScrollView {
                 ForEach(routes, id: \.self) { route in
                     menuButton(route)
@@ -84,9 +84,9 @@ struct SideMenuView<Routes: RouteProtocol>: View {
                     .font(elementFont)
             }
             .foregroundStyle(coordinator.top() == route ? elementSelectedForegroundColor : elementForegroundColor)
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Rectangle().fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor))
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Rectangle().fill(coordinator.top() == route ? elementSelectedBackgroundColor : elementBackgroundColor))
             
         }
         .buttonStyle(.plain)
@@ -138,7 +138,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
     var elementSelectedForegroundColor: Color
     var elementBackgroundColor: Color
     var elementSelectedBackgroundColor: Color
-    let content: () -> Content
+    let content: (Routes) -> Content
     
     public init(
         coordinator: AppCoordinator<Routes>,
@@ -156,7 +156,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
         elementSelectedForegroundColor: Color = .white,
         elementBackgroundColor: Color = .gray,
         elementSelectedBackgroundColor: Color = .accentColor,
-        @ViewBuilder content: @escaping () -> Content
+        @ViewBuilder content: @escaping (Routes) -> Content
     ) {
         self.coordinator = coordinator
         self.routes = routes
@@ -179,20 +179,22 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                content()
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .overlay(content: {
-                        if viewModel.isMenuOpen {
-                            Color.gray
-                                .opacity(0.3)
-                                .brightness(-0.6)
-                                .ignoresSafeArea(.all)
+                ForEach(Array(routes.enumerated()), id: \.element) { index, route in
+                    content(route)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .overlay(content: {
+                            if viewModel.isMenuOpen {
+                                Color.gray
+                                    .opacity(0.3)
+                                    .brightness(-0.6)
+                                    .ignoresSafeArea(.all)
+                            }
+                        })
+                        .disabled(viewModel.isMenuOpen)
+                        .onTapGesture {
+                            viewModel.closeMenu()
                         }
-                    })
-                    .disabled(viewModel.isMenuOpen)
-                    .onTapGesture {
-                        viewModel.closeMenu()
-                    }
+                }
                 VStack {
                     HStack {
                         Button(action: {
@@ -228,8 +230,8 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                     elementBackgroundColor: elementBackgroundColor,
                     elementSelectedBackgroundColor: elementSelectedBackgroundColor
                 )
-                    .frame(width: viewModel.menuWidth)
-                    .offset(x: viewModel.offset - viewModel.menuWidth)
+                .frame(width: viewModel.menuWidth)
+                .offset(x: viewModel.offset - viewModel.menuWidth)
             }
             .gesture(
                 DragGesture()
