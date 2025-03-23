@@ -179,7 +179,7 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
     public var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                ForEach(Array(routes.enumerated()), id: \.element) { index, route in
+                ForEach(Array(coordinator.routerStack.routes.enumerated()), id: \.element) { index, route in
                     content(route)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .overlay(content: {
