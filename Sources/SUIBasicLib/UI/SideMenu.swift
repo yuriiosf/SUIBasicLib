@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct SideMenuView<Routes: RouteProtocol>: View {
     @ObservedObject var coordinator: AppCoordinator<Routes>
     @ObservedObject var viewModel: SideMenuViewModel
@@ -307,3 +308,4 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
         }
     }
 }
+#endif
