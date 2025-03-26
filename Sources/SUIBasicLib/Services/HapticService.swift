@@ -5,6 +5,7 @@
 //  Created by admin on 21.03.2025.
 //
 
+#if os(iOS)
 import UIKit
 
 @MainActor
@@ -32,3 +33,4 @@ public class HapticService {
         generator.selectionChanged()
     }
 }
+#endif

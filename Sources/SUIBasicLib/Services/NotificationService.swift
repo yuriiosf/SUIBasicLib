@@ -6,6 +6,7 @@
 //
 
 import Foundation
+#if os(iOS)
 import UserNotifications
 
 public enum NotificationType {
@@ -173,3 +174,4 @@ extension NotificationService {
         }
     }
 }
+#endif
