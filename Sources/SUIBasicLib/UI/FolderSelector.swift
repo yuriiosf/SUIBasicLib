@@ -101,9 +101,9 @@ public struct FolderSelectorView: View {
     public let title: String
     public var onlyFolderName: Bool
     @Binding public var text: String
-    public var extraAction: () -> Void = { }
+    public var extraAction: () -> Void
     
-    public init(title: String, onlyFolderName: Bool, text: Binding<String>, extraAction: @escaping () -> Void) {
+    public init(title: String, onlyFolderName: Bool, text: Binding<String>, extraAction: @escaping () -> Void = {}) {
         self.title = title
         self.onlyFolderName = onlyFolderName
         self._text = text
