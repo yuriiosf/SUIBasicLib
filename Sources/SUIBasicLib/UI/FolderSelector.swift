@@ -11,12 +11,19 @@ import SwiftUI
 #if os(macOS)
 public struct FolderSelector: View {
     @Binding public var src: String
-    public var newDestination = false
-    public var chooseFiles = true
-    public var onlyFolderName = false
+    public var newDestination: Bool
+    public var chooseFiles: Bool
+    public var onlyFolderName: Bool
     
-    public init(bindedSrc: Binding<String>) {
-        _src = bindedSrc
+    public init(src: Binding<String>) {
+        self._src = src
+    }
+    
+    public init(src: Binding<String>, newDestination: Bool = false, chooseFiles: Bool = true, onlyFolderName: Bool = false) {
+        self._src = src
+        self.newDestination = newDestination
+        self.chooseFiles = chooseFiles
+        self.onlyFolderName = onlyFolderName
     }
     
     public var body: some View {
