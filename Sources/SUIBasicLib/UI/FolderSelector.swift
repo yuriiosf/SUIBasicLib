@@ -15,10 +15,6 @@ public struct FolderSelector: View {
     public var chooseFiles: Bool
     public var onlyFolderName: Bool
     
-    public init(src: Binding<String>) {
-        self._src = src
-    }
-    
     public init(src: Binding<String>, newDestination: Bool = false, chooseFiles: Bool = true, onlyFolderName: Bool = false) {
         self._src = src
         self.newDestination = newDestination
