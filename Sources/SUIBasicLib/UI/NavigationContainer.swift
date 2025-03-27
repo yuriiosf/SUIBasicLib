@@ -97,8 +97,8 @@ public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
                     .zIndex(Double(index))
             }
         }
-        .gesture(swipeEnabled ?
-            DragGesture()
+        .conditionalGesture(
+            swipeEnabled ? DragGesture()
                 .onChanged { value in
                     if coordinator.routerStack.routes.count > 1 {
                         dragOffset = max(value.translation.width, 0)
@@ -111,9 +111,26 @@ public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
                     withAnimation {
                         dragOffset = 0
                     }
-                }
-                 : nil
-        )
+                } : nil,
+            enabled: coordinator.routerStack.routes.count > 1)
         .environmentObject(coordinator)
+    }
+}
+
+struct ConditionalGestureModifier<G: Gesture>: ViewModifier {
+    let gesture: G?
+    
+    func body(content: Content) -> some View {
+        if let gesture = gesture {
+            content.gesture(gesture)
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func conditionalGesture<G: Gesture>(_ gesture: G?, enabled: Bool = true) -> some View {
+        modifier(ConditionalGestureModifier(gesture: enabled ? gesture : nil))
     }
 }

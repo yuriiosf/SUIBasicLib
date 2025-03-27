@@ -310,11 +310,6 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                 event ? viewModel.openMenu() : viewModel.closeMenu()
             }
         }
-//        .transaction {
-//            if !transactionWithAnimation {
-//                $0.animation = nil
-//            }
-//        }
     }
 }
 #endif
