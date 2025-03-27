@@ -74,14 +74,17 @@ public final class AppCoordinator<Route: RouteProtocol>: ObservableObject {
 
 public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
     @ObservedObject var coordinator: AppCoordinator<Routes>
+    var swipeEnabled: Bool
     var content: (Routes) -> Content
     @State private var dragOffset: CGFloat = 0
     
     public init(
         coordinator: AppCoordinator<Routes>,
+        swipeEnabled: Bool = true,
         @ViewBuilder content: @escaping (Routes) -> Content
     ) {
         self.coordinator = coordinator
+        self.swipeEnabled = swipeEnabled
         self.content = content
     }
     
@@ -94,7 +97,7 @@ public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
                     .zIndex(Double(index))
             }
         }
-        .gesture(
+        .gesture(swipeEnabled ?
             DragGesture()
                 .onChanged { value in
                     if coordinator.routerStack.routes.count > 1 {
@@ -109,6 +112,7 @@ public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
                         dragOffset = 0
                     }
                 }
+                 : nil
         )
         .environmentObject(coordinator)
     }
