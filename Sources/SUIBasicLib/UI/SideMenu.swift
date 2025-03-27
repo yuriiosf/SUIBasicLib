@@ -28,6 +28,7 @@ struct SideMenuView<Routes: RouteProtocol>: View {
     var isRounded: Bool
     var roundedPadding: CGFloat?
     var roundedCornerRadius: CGFloat?
+    var transactionWithAnimation: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -109,9 +110,16 @@ struct SideMenuView<Routes: RouteProtocol>: View {
     
     private func menuSelection(_ state: Routes) {
         if coordinator.top() != state {
-            withAnimation {
-                coordinator.set(state)
+            if transactionWithAnimation {
+                withAnimation {
+                    coordinator.set(state)
+                }
+            } else {
+                withTransaction(Transaction(animation: nil)) {
+                    coordinator.set(state)
+                }
             }
+
         }
         HapticService.shared.selection()
         viewModel.closeMenu()
@@ -264,7 +272,8 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                     elementSelectedBackgroundColor: elementSelectedBackgroundColor,
                     isRounded: isRounded,
                     roundedPadding: roundedPadding,
-                    roundedCornerRadius: roundedCornerRadius
+                    roundedCornerRadius: roundedCornerRadius,
+                    transactionWithAnimation: transactionWithAnimation
                 )
                 .frame(width: viewModel.menuWidth)
                 .offset(x: viewModel.offset - viewModel.menuWidth)
@@ -301,11 +310,11 @@ public struct SideMenuContentView<Content: View, Routes: RouteProtocol>: View {
                 event ? viewModel.openMenu() : viewModel.closeMenu()
             }
         }
-        .transaction {
-            if !transactionWithAnimation {
-                $0.animation = nil
-            }
-        }
+//        .transaction {
+//            if !transactionWithAnimation {
+//                $0.animation = nil
+//            }
+//        }
     }
 }
 #endif
