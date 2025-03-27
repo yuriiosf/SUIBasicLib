@@ -97,22 +97,20 @@ public struct NavigationContainer<Routes: RouteProtocol, Content: View>: View {
                     .zIndex(Double(index))
             }
         }
-        .conditionalGesture(
-            swipeEnabled ? DragGesture()
-                .onChanged { value in
-                    if coordinator.routerStack.routes.count > 1 {
-                        dragOffset = max(value.translation.width, 0)
-                    }
+        .gesture(swipeEnabled ? DragGesture()
+            .onChanged { value in
+                if coordinator.routerStack.routes.count > 1 {
+                    dragOffset = max(value.translation.width, 0)
                 }
-                .onEnded { value in
-                    if dragOffset > 100 {
-                        coordinator.pop()
-                    }
-                    withAnimation {
-                        dragOffset = 0
-                    }
-                } : nil,
-            enabled: coordinator.routerStack.routes.count > 1)
+            }
+            .onEnded { value in
+                if dragOffset > 100 {
+                    coordinator.pop()
+                }
+                withAnimation {
+                    dragOffset = 0
+                }
+            } : nil)
         .environmentObject(coordinator)
     }
 }
