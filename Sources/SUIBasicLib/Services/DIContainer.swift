@@ -7,6 +7,7 @@
 
 import Foundation
 
+#if os(iOS) || os(macOS)
 public protocol DIContainerProtocol {
     func resolve<T>() -> T
 }
@@ -31,3 +32,4 @@ public class DIContainer: ObservableObject, DIContainerProtocol {
         return dependency
     }
 }
+#endif

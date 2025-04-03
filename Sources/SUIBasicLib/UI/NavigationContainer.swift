@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS) || os(macOS)
 struct RouteStack<T: RouteProtocol> {
     var routes: [T]
     
@@ -132,3 +133,4 @@ extension View {
         modifier(ConditionalGestureModifier(gesture: enabled ? gesture : nil))
     }
 }
+#endif
