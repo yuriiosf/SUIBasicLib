@@ -48,7 +48,7 @@ public func runProcess(executableURL: URL, arguments: [String]) async -> String?
     }
 }
 
-public func runProcess(executableURL: URL, arguments: [String]) async throws -> String? {
+public func runThrowingProcess(executableURL: URL, arguments: [String]) async throws -> String? {
     let process = Process()
     process.executableURL = executableURL
     process.arguments = arguments
