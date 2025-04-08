@@ -47,4 +47,24 @@ public func runProcess(executableURL: URL, arguments: [String]) async -> String?
         }
     }
 }
+
+public func runProcess(executableURL: URL, arguments: [String]) async throws -> String? {
+    let process = Process()
+    process.executableURL = executableURL
+    process.arguments = arguments
+    
+    let pipe = Pipe()
+    process.standardOutput = pipe
+    process.standardError = pipe
+    
+    try process.run()
+    
+    return try await withCheckedThrowingContinuation { continuation in
+        process.terminationHandler = { _ in
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
+            continuation.resume(returning: output)
+        }
+    }
+}
 #endif
