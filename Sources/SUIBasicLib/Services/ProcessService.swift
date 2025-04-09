@@ -67,4 +67,37 @@ public func runThrowingProcess(executableURL: URL, arguments: [String]) async th
         }
     }
 }
+
+public func runProcessClear(executableURL: URL, arguments: [String]) async -> String? {
+    return await withCheckedContinuation { continuation in
+        let process = Process()
+        process.executableURL = executableURL
+        process.arguments = arguments
+        
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+        
+        process.terminationHandler = { _ in
+            let outputData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
+            let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+            
+            let output = String(data: outputData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let errorOutput = String(data: stderrData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            if let errorOutput, !errorOutput.isEmpty {
+                print("⚠️ stderr: \(errorOutput)")
+            }
+            
+            continuation.resume(returning: output)
+        }
+        
+        do {
+            try process.run()
+        } catch {
+            continuation.resume(returning: "Error: \(error.localizedDescription)")
+        }
+    }
+}
 #endif
